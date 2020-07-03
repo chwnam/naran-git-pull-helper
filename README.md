@@ -1,2 +1,2 @@
-# naran-git-pull-helper
-Automatic git pull command helper
+# Naran Git Pull Helper
+
