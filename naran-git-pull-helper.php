@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'NRGPH_MAIN', __FILE__ );
-define( 'NRGPH_VERSION', '0.0.0' );
+define( 'NRGPH_VERSION', '1.0.0' );
 
 
 final class Naran_Git_Pull_Helper {
@@ -24,16 +24,19 @@ final class Naran_Git_Pull_Helper {
 	private function __construct() {
 		require_once __DIR__ . '/includes/sanitizers.php';
 		require_once __DIR__ . '/includes/class-nrgph-cpt-repository.php';
+		require_once __DIR__ . '/includes/class-nrgph-form-widgets.php';
 		require_once __DIR__ . '/includes/class-nrgph-meta-field.php';
+		require_once __DIR__ . '/includes/class-nrgph-option-field.php';
 		require_once __DIR__ . '/includes/class-nrgph-rewrites.php';
-		require_once __DIR__ . '/includes/class-nrgph-options.php';
+		require_once __DIR__ . '/includes/class-nrgph-settings.php';
+		require_once __DIR__ . '/includes/class-nrgph-settings-object.php';
 		require_once __DIR__ . '/includes/class-nrgph-webhook-handler.php';
 		require_once __DIR__ . '/includes/class-nrgph-webhook-log.php';
 
 		$this->modules = [
 			'cpt-repository' => new NRGPH_CPT_Repository(),
 			'rewrite'        => new NRGPH_Rewrites(),
-			'options'        => new NRGPH_Options(),
+			'settings'       => new NRGPH_Settings(),
 			'webhook-log'    => new NRGPH_Webhook_Log(),
 		];
 

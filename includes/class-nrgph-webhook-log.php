@@ -30,7 +30,7 @@ if ( ! class_exists( 'NRGPH_Webhook_Log' ) ) :
 
 			$comment_data['comment_type'] = 'nrgph-webhook-log';
 
-			return wp_insert_comment( $comment_data );
+			// return wp_insert_comment( $comment_data );
 		}
 	}
 

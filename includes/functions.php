@@ -31,8 +31,32 @@ function nrgph_webhook_log() {
 }
 
 
+/**
+ * @return NRGPH_Settings_Object
+ */
+function nrgph_get_setting_object() {
+	/** @var  NRGPH_Settings $settings */
+	$settings = nrgph_get_module( 'settings' );
+
+	/** @var NRGPH_Option_Field $option */
+	$option = $settings->get_settings();
+
+	return $option->get();
+}
+
+
 function nrgph_meta_field( $meta_key, $subtype ) {
 	return NRGPH_Meta_Field::get_field( $meta_key, $subtype );
+}
+
+
+function nrgph_option_field( $option_name ) {
+	return NRGPH_Option_Field::get_field( $option_name );
+}
+
+
+function nrgph_get_webhook_url( $post_id ) {
+	return NRGPH_Rewrites::get_webhook_url( $post_id );
 }
 
 
@@ -93,6 +117,11 @@ function nrgph_get_available_webhook_providers() {
 		'github' => 'Github',
 		'gitlab' => 'Gitlab',
 	];
+}
+
+
+function nrgph_get_webhook_provider_name( $provider ) {
+	return nrgph_get_available_webhook_providers()[ $provider ] ?? '';
 }
 
 

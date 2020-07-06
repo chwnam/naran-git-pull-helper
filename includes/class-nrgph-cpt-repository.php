@@ -15,9 +15,10 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 		public function __construct() {
 			add_action( 'init', [ $this, 'register_post_type' ], 100 );
 			add_action( 'init', [ $this, 'register_meta' ], 110 );
-
+			add_action( 'current_screen', [ $this, 'current_screen' ], 100 );
 			add_action( 'edit_form_after_editor', [ $this, 'output_edit_form' ] );
 			add_action( 'save_post_' . self::get_post_type(), [ $this, 'save_metadata' ], 100, 3 );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ], 100 );
 		}
 
 		public static function get_post_type() {
@@ -58,8 +59,8 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 					'show_in_menu'         => true,
 					'show_in_admin_bar'    => false,
 					'show_in_rest'         => false,
-// TODO: capability type
-//					'capability_type'      => [ 'repository', 'repositories' ],
+					// TODO: capability type
+					//					'capability_type'      => [ 'repository', 'repositories' ],
 					'map_meta_cap'         => true,
 					'supports'             => [ 'title' ],
 					'register_meta_box_cb' => null,
@@ -128,6 +129,60 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 			);
 		}
 
+		public function current_screen( WP_Screen $screen ) {
+			if ( self::get_post_type() === $screen->post_type && 'edit' === $screen->base ) {
+				add_filter(
+					'manage_' . $screen->id . '_columns',
+					[ $this, 'manage_columns' ]
+				);
+
+				add_action(
+					'manage_' . $screen->post_type . '_posts_custom_column',
+					[ $this, 'custom_column' ],
+					100,
+					2
+				);
+			}
+		}
+
+		public function manage_columns( array $columns ) {
+			$pos = array_search( 'date', array_keys( $columns ) );
+
+			if ( false !== $pos ) {
+				$columns = array_merge(
+					(array) array_slice( $columns, 0, $pos ),
+					[
+						'provider' => 'Provider',
+						'webhook'  => 'Webhook',
+						'path'     => 'Path',
+					],
+					(array) array_slice( $columns, $pos )
+				);
+			}
+
+			return $columns;
+		}
+
+		public function custom_column( $column_name, $post_id ) {
+			switch ( $column_name ) {
+				case 'provider':
+					echo esc_html(
+						nrgph_get_webhook_provider_name(
+							$this->get_field_webhook_provider()->get( $post_id )
+						)
+					);
+					break;
+
+				case 'webhook':
+					echo esc_url( nrgph_get_webhook_url( $post_id ) );
+					break;
+
+				case 'path':
+					echo esc_html( $this->get_field_local_path()->get( $post_id ) );
+					break;
+			}
+		}
+
 		public function output_edit_form( WP_Post $post ) {
 			if ( self::get_post_type() === $post->post_type ) {
 				nrgph_template(
@@ -141,6 +196,7 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 						'value_local_path'            => $this->get_field_local_path()->get( $post ),
 						'value_secret_token'          => $this->get_field_secret_token()->get( $post ),
 						'value_remote_url'            => $this->get_field_remote_url()->get( $post ),
+						'value_webhook_url'           => nrgph_get_webhook_url( $post->ID ),
 						'available_webhook_providers' => nrgph_get_available_webhook_providers(),
 					]
 				);
@@ -149,9 +205,15 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 				if ( empty( $screen->action ) && 'post' === $screen->base ) {
 					$provider = $this->get_field_webhook_provider()->get( $post );
 					if ( 'github' === $provider ) {
-						// TODO: github instruction.
+						nrgph_template(
+							'admin/instruction-github.php',
+							[ 'base_url' => plugin_dir_url( NRGPH_MAIN ) . 'assets/img/admin' ]
+						);
 					} elseif ( 'gitlab' === $provider ) {
-						// TODO: gitlab instruction.
+						nrgph_template(
+							'admin/instruction-gitlab.php',
+							[ 'base_url' => plugin_dir_url( NRGPH_MAIN ) . 'assets/img/admin' ]
+						);
 					}
 				}
 			}
@@ -185,6 +247,26 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 				$this->get_field_remote_url()->update(
 					$post_id,
 					$_REQUEST[ self::META_KEY_REMOTE_URL ] ?? ''
+				);
+			}
+		}
+
+		public function enqueue_scripts( $hook ) {
+			global $typenow;
+
+			if ( 'post.php' === $hook && self::get_post_type() === $typenow ) {
+				wp_enqueue_style(
+					'nrgph-instructions',
+					plugins_url( 'assets/css/admin/instructions.css', NRGPH_MAIN ),
+					[],
+					NRGPH_VERSION
+				);
+				wp_enqueue_script(
+					'nrgph-instructions',
+					plugins_url( 'assets/js/admin/instructions.js', NRGPH_MAIN ),
+					[ 'jquery' ],
+					NRGPH_VERSION,
+					true
 				);
 			}
 		}

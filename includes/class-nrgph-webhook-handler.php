@@ -125,7 +125,6 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 			 * gitlab -
 			 *  checkout_sha: e96f607451f0aa23d7b6868b5b0087a0ac556768
 			 * gitlab -> nrgph_gitlab_checkout_sha ['checkout_sha']
-
 			 */
 			$provider = $this->get_webhook_provider();
 			if ( 'github' === $provider ) {
@@ -158,7 +157,6 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 			 * gitlab -
 			 *  checkout_sha: e96f607451f0aa23d7b6868b5b0087a0ac556768
 			 * gitlab -> nrgph_gitlab_checkout_sha ['checkout_sha']
-
 			 */
 			$provider = $this->get_webhook_provider();
 			if ( 'github' === $provider ) {
@@ -183,8 +181,9 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 		}
 
 		private function get_git_cmd() {
-			// TODO: git command from settings.
-			return '/usr/bin/git';
+			$settings = nrgph_get_setting_object();
+
+			return $settings->get_git_path();
 		}
 
 		private function error_log( $log ) {

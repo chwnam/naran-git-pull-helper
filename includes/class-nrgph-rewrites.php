@@ -39,6 +39,10 @@ if ( ! class_exists( 'NRGPH_Rewrites' ) ) :
 				exit;
 			}
 		}
+
+		public static function get_webhook_url( $repository_id ) {
+			return home_url( '/nrgph/webhook/' . intval( $repository_id ) . '/' );
+		}
 	}
 
 endif;

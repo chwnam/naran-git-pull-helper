@@ -1,0 +1,20 @@
+#instructions {
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#instructions > h2 {
+    font-size: 20px;
+    font-weight: 400;
+    padding: 0;
+}
+
+#instructions > section > h3 {
+    margin-top: 24px;
+    font-size: 16px;
+}
+
+#toggle-instructions {
+    font-size: 14px;
+}
