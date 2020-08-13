@@ -42,7 +42,9 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 						$this->insert_error_log();
 					}
 				} else {
-					// error log
+					$this->error_log(
+						sprintf( "Error handling request.\n- path: %s\n- git: %s", $path, $git )
+					);
 				}
 
 				die( 200 );
@@ -182,8 +184,13 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 
 		private function get_git_cmd() {
 			$settings = nrgph_get_setting_object();
+			$git      = $settings->get_git_path();
 
-			return $settings->get_git_path();
+			if ( empty( $git ) ) {
+				$git = '/usr/bin/git';
+			}
+
+			return $git;
 		}
 
 		private function error_log( $log ) {
