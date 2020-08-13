@@ -43,7 +43,14 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 					}
 				} else {
 					$this->error_log(
-						sprintf( "Error handling request.\n- path: %s\n- git: %s", $path, $git )
+						sprintf(
+							"Error handling request.\n- path: %s (%s, %s)\n- git: %s (%s)",
+							$path,
+							is_dir( $path ) ? 'is_dir: true' : 'is_dir: false',
+							is_executable( $path ) ? 'is_executable: true' : 'is_executable: false',
+							$git,
+							is_executable( $path ) ? 'is_executable: true' : 'is_executable: false'
+						)
 					);
 				}
 
