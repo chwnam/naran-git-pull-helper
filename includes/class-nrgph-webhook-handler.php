@@ -49,7 +49,7 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 							is_dir( $path ) ? 'is_dir: true' : 'is_dir: false',
 							is_executable( $path ) ? 'is_executable: true' : 'is_executable: false',
 							$git,
-							is_executable( $path ) ? 'is_executable: true' : 'is_executable: false'
+							is_executable( $git ) ? 'is_executable: true' : 'is_executable: false'
 						)
 					);
 				}
