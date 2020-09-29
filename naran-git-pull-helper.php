@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Naran Git Pull Helper
  * Description: Run `git pull` automatically for you.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      changwoo
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/naran-git-pull-helper
