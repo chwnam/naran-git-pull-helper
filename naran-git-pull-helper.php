@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'NRGPH_MAIN', __FILE__ );
-define( 'NRGPH_VERSION', '1.0.0' );
+define( 'NRGPH_VERSION', '1.1.0' );
 
 
 final class Naran_Git_Pull_Helper {
