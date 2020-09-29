@@ -74,6 +74,40 @@ if ( ! class_exists( 'NRGPH_Settings' ) ) :
 				]
 			);
 
+			add_settings_field(
+				'git-clone',
+				'Clone',
+				[ 'NRGPH_Form_Widgets', 'checkbox_field' ],
+				'nrgph-options',
+				'nrgph',
+				[
+					'label_for' => 'clone',
+					'attrs'     => [
+						'id'      => 'clone',
+						'name'    => self::OPTION_NAME_SETTINGS . '[clone]',
+						'checked' => $value->is_clone(),
+					],
+					'desc'      => 'Clone first if specified directory does not exist. The server must have execute, write privilege.',
+				]
+			);
+
+			add_settings_field(
+				'git-reset-hard',
+				'Hard Reset',
+				[ 'NRGPH_Form_Widgets', 'checkbox_field' ],
+				'nrgph-options',
+				'nrgph',
+				[
+					'label_for' => 'reset-hard',
+					'attrs'     => [
+						'id'      => 'reset-hard',
+						'name'    => self::OPTION_NAME_SETTINGS . '[reset_hard]',
+						'checked' => $value->is_reset_hard(),
+					],
+					'desc'      => 'Run `git reset --hard master` before run `git pull`.',
+				]
+			);
+
 			nrgph_template(
 				'admin/options.php',
 				[

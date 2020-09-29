@@ -29,9 +29,14 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 				$path = $this->get_local_path();
 
 				if ( $path && is_dir( $path ) && is_executable( $path ) && is_executable( $git ) ) {
-					$path    = escapeshellarg( $path );
-					$command = "cd {$path} && {$git} pull";
+					$path = escapeshellarg( $path );
+					// reset hard
+					$settings = nrgph_get_setting_object();
+					if ( $settings->is_reset_hard() ) {
+						exec( "cd {$path} && {$git} reset --hard master" );
+					}
 
+					$command = "cd {$path} && {$git} pull";
 					$this->error_log( "Executing command: `{$command}`" );
 					exec( $command, $output, $return );
 					$this->error_log( sprintf( "`git pull` executed. return_val: %s", print_r( $return, 1 ) ) );
@@ -137,11 +142,8 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 			 */
 			$provider = $this->get_webhook_provider();
 			if ( 'github' === $provider ) {
-
 			} elseif ( 'gitlab' === $provider ) {
-
 			}
-
 			// nrgph_nrgph_insert_webhook_log();
 		}
 
@@ -169,11 +171,8 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 			 */
 			$provider = $this->get_webhook_provider();
 			if ( 'github' === $provider ) {
-
 			} elseif ( 'gitlab' === $provider ) {
-
 			}
-
 			// nrgph_nrgph_insert_webhook_log();
 		}
 

@@ -59,6 +59,7 @@
                     value="<?php echo esc_attr( $value_local_path ); ?>"
                     required="required"
             >
+            <p class="description">Relative path to <strong>wp-content</strong>.</p>
         </td>
     </tr>
     <tr>

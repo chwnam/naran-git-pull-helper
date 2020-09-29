@@ -15,6 +15,19 @@ if ( ! class_exists( 'NRGPH_Form_Widgets' ) ) :
 			);
 		}
 
+		public static function checkbox_field( $args ) {
+			$args['attrs']['type'] = 'checkbox';
+
+			$attrs = self::format_attrs( $args['attrs'] ?? [] );
+
+			printf(
+				'<input %s> <label for="%s">%s</label>',
+				$attrs,
+				esc_attr( $args['attrs']['id'] ?? '' ),
+				esc_html( $args['desc'] ?? '' )
+			);
+		}
+
 		private static function format_attrs( $attrs ) {
 			$buffer = [];
 
@@ -27,11 +40,19 @@ if ( ! class_exists( 'NRGPH_Form_Widgets' ) ) :
 				switch ( $key ) {
 					case 'href':
 					case 'src':
-						$buffer[] = esc_url( $value );
+						$buffer[] = $key . '=' . self::enclose( esc_url( $value ) );
 						break;
 
 					case 'class':
-						$buffer[] = implode( ' ', array_map( 'sanitize_html_class', preg_split( '/\s+/', $value ) ) );
+						$buffer[] = $key . '=' . self::enclose(
+								implode( ' ', array_map( 'sanitize_html_class', preg_split( '/\s+/', $value ) ) )
+							);
+						break;
+
+					case 'checked':
+						if ( $key == $value || true === $value ) {
+							$buffer[] = $key . '=' . self::enclose( $key );
+						}
 						break;
 
 					default:

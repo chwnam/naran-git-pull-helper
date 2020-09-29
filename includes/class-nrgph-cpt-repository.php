@@ -8,9 +8,9 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 
 	final class NRGPH_CPT_Repository {
 		const META_KEY_WEBHOOK_PROVIDER = 'nrgph_repository_webhook_provider';
-		const META_KEY_SECRET_TOKEN     = 'nrgph_repository_secret_token';
-		const META_KEY_LOCAL_PATH       = 'nrgph_repository_local_path';
-		const META_KEY_REMOTE_URL       = 'nrgph_repository_remote_url';
+		const META_KEY_SECRET_TOKEN = 'nrgph_repository_secret_token';
+		const META_KEY_LOCAL_PATH = 'nrgph_repository_local_path';
+		const META_KEY_REMOTE_URL = 'nrgph_repository_remote_url';
 
 		public function __construct() {
 			add_action( 'init', [ $this, 'register_post_type' ], 100 );
@@ -222,12 +222,33 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 		public function save_metadata( $post_id, $post, $updated ) {
 			if ( $this->is_save_context( $post, $updated ) ) {
 				$error      = new WP_Error();
-				$local_path = realpath( $_REQUEST[ self::META_KEY_LOCAL_PATH ] ?? '' );
-				if ( ! $local_path ) {
+				$local_path = trim( wp_unslash( $_REQUEST[ self::META_KEY_LOCAL_PATH ] ?? '' ), '/\\' );
+				$remote     = wp_unslash( $_REQUEST[ self::META_KEY_REMOTE_URL ] ?? '' );
+				$repo_path  = WP_CONTENT_DIR . "/{$local_path}";
+
+				// Run git clone.
+				if ( $repo_path && ! file_exists( $repo_path ) && $remote ) {
+					$settings = nrgph_get_setting_object();
+					if ( $settings->is_clone() ) {
+						$git = escapeshellcmd( $settings->get_git_path() );
+						if ( empty( $git ) ) {
+							$git = '/usr/bin/git';
+						}
+						$parent = escapeshellarg( dirname( $repo_path ) );
+						$remote = escapeshellarg( $remote );
+						$base   = escapeshellarg( wp_basename( $repo_path ) );
+						$cmd    = "cd {$parent} && {$git} clone {$remote} {$base}";
+						exec( $cmd, $output, $return );
+					}
+				}
+
+				$repo_path = realpath( $repo_path );
+				if ( ! $repo_path ) {
 					$error->add( 'error', 'Local path must exist in this server.' );
-				} elseif ( ! is_dir( $local_path ) || ! is_executable( $local_path ) ) {
+				} elseif ( ! is_dir( $repo_path ) || ! is_executable( $repo_path ) ) {
 					$error->add( 'error', 'Local path must be a directory and accessible by the web server.' );
 				}
+
 				if ( $error->has_errors() ) {
 					wp_die( $error, 'Error saving repository', [ 'back_link' => true ] );
 				}
