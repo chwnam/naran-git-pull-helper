@@ -177,7 +177,7 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 		}
 
 		private function get_local_path() {
-			return nrgph_get_cpt_repository()->get_field_local_path()->get( $this->object );
+			return trailingslashit( WP_CONTENT_DIR ) .  nrgph_get_cpt_repository()->get_field_local_path()->get( $this->object );
 		}
 
 		private function get_secret_token() {
