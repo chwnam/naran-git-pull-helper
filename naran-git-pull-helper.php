@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Naran Git Pull Helper
  * Description: Run `git pull` automatically for you.
- * Version:     1.1.0
+ * Version:     1.1.1
  * Author:      changwoo
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/naran-git-pull-helper
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'NRGPH_MAIN', __FILE__ );
-define( 'NRGPH_VERSION', '1.1.0' );
+define( 'NRGPH_VERSION', '1.1.1' );
 
 
 final class Naran_Git_Pull_Helper {
