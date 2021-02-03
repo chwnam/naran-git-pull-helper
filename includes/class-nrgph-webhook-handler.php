@@ -33,7 +33,9 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 					// reset hard
 					$settings = nrgph_get_setting_object();
 					if ( $settings->is_reset_hard() ) {
-						exec( "cd {$path} && {$git} reset --hard master", $output, $return );
+					    $command = "cd {$path} && {$git} reset --hard master";
+                        $this->error_log( "Executing command: `{$command}`" );
+						exec( $command, $output, $return );
                         $this->error_log( sprintf( "`git reset --hard master` executed. return_val: %s", print_r( $return, 1 ) ) );
 					}
 
@@ -194,7 +196,7 @@ if ( ! class_exists( 'NRGPH_Webhook_Handler' ) ) :
 			$git      = $settings->get_git_path();
 
 			if ( empty( $git ) ) {
-				$git = '/usr/bin/git';
+				$git = 'git';
 			}
 
 			return $git;
