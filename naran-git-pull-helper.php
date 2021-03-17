@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Naran Git Pull Helper
  * Description: Run `git pull` automatically for you.
- * Version:     1.1.1
+ * Version:     1.1.2
  * Author:      changwoo
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/naran-git-pull-helper
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'NRGPH_MAIN', __FILE__ );
-define( 'NRGPH_VERSION', '1.1.1' );
+define( 'NRGPH_VERSION', '1.1.2' );
 
 
 final class Naran_Git_Pull_Helper {
@@ -44,13 +44,16 @@ final class Naran_Git_Pull_Helper {
 		register_deactivation_hook( NRGPH_MAIN, [ $this, 'deactivated' ] );
 	}
 
-	private function __clone() {
+	public function __clone() {
+	    throw new RuntimeException();
 	}
 
-	private function __wakeup() {
+    public function __wakeup() {
+        throw new RuntimeException();
 	}
 
-	private function __sleep() {
+    public function __sleep() {
+        throw new RuntimeException();
 	}
 
 	public static function get_instance() {

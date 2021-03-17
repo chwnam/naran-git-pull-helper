@@ -42,7 +42,7 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 						'all_items'                => 'All Repositories',
 						'menu_name'                => 'Repositories',
 						'filter_items_list'        => 'Filter repositories list',
-						'items_list_navigation'    => 'Repolistories list navigation',
+						'items_list_navigation'    => 'Repositories list navigation',
 						'items_list'               => 'Repositories List',
 						'item_published'           => 'Repository published',
 						'item_published_privately' => 'Repository published privately',
@@ -60,7 +60,7 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 					'show_in_admin_bar'    => false,
 					'show_in_rest'         => false,
 					// TODO: capability type
-					//					'capability_type'      => [ 'repository', 'repositories' ],
+					// 'capability_type'      => [ 'repository', 'repositories' ],
 					'map_meta_cap'         => true,
 					'supports'             => [ 'title' ],
 					'register_meta_box_cb' => null,
@@ -222,27 +222,26 @@ if ( ! class_exists( 'NRGPH_CPT_Repository' ) ) :
 		public function save_metadata( $post_id, $post, $updated ) {
 			if ( $this->is_save_context( $post, $updated ) ) {
 				$error      = new WP_Error();
-				$local_path = trim( wp_unslash( $_REQUEST[ self::META_KEY_LOCAL_PATH ] ?? '' ), '/\\' );
+				$local_path = wp_unslash( $_REQUEST[ self::META_KEY_LOCAL_PATH ] ?? '' );
 				$remote     = wp_unslash( $_REQUEST[ self::META_KEY_REMOTE_URL ] ?? '' );
-				$repo_path  = WP_CONTENT_DIR . "/{$local_path}";
 
 				// Run git clone.
-				if ( $repo_path && ! file_exists( $repo_path ) && $remote ) {
+				if ( $local_path && ! file_exists( $local_path ) && $remote ) {
 					$settings = nrgph_get_setting_object();
 					if ( $settings->is_clone() ) {
 						$git = escapeshellcmd( $settings->get_git_path() );
 						if ( empty( $git ) ) {
-							$git = '/usr/bin/git';
+							$git = 'git';
 						}
-						$parent = escapeshellarg( dirname( $repo_path ) );
+						$parent = escapeshellarg( dirname( $local_path ) );
 						$remote = escapeshellarg( $remote );
-						$base   = escapeshellarg( wp_basename( $repo_path ) );
+						$base   = escapeshellarg( wp_basename( $local_path ) );
 						$cmd    = "cd {$parent} && {$git} clone {$remote} {$base}";
 						exec( $cmd, $output, $return );
 					}
 				}
 
-				$repo_path = realpath( $repo_path );
+				$repo_path = realpath( $local_path );
 				if ( ! $repo_path ) {
 					$error->add( 'error', 'Local path must exist in this server.' );
 				} elseif ( ! is_dir( $repo_path ) || ! is_executable( $repo_path ) ) {
